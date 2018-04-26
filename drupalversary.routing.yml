@@ -1,0 +1,7 @@
+drupalversary.username:
+  path: u/{username}
+  defaults:
+    _controller: Drupal\drupalversary\Controller\UserController::byUsername
+  requirements:
+    _permission: access content
+    username: \w+
