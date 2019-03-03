@@ -3,6 +3,7 @@
 namespace Drupal\drupalversary\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\drupalversary\Exception\UserNotFoundException;
 use Drupal\drupalversary\Service\AccountRetriever;
 use Drupal\drupalversary\Service\CreatedDateParser;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -54,7 +55,14 @@ class UserController extends ControllerBase {
    *   A render array.
    */
   public function byUsername(string $username): array {
-    $user = $this->accountRetriever->byUsername($username);
+    try {
+      $user = $this->accountRetriever->byUsername($username);
+    }
+    catch (UserNotFoundException $e) {
+      return [
+        '#markup' => $e->getMessage(),
+      ];
+    }
 
     $date_parser = $this->createdDateParser
       ->setCreatedDate($user->get('created'));

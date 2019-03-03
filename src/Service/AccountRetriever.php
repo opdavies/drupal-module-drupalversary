@@ -3,6 +3,7 @@
 namespace Drupal\drupalversary\Service;
 
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\drupalversary\Exception\UserNotFoundException;
 use Opdavies\Drupalorg\Entity\User;
 use Opdavies\Drupalorg\Query\UserQuery;
 
@@ -48,9 +49,14 @@ class AccountRetriever {
       ->getContents()
       ->first();
 
-    $this->cache->set($key, $data);
+    if ($data === NULL) {
+      throw new UserNotFoundException("Username {$username} not found.");
+    }
+    else {
+      $this->cache->set($key, $data);
 
-    return User::create($data);
+      return User::create($data);
+    }
   }
 
   public function byUid(int $uid) {
